@@ -1,0 +1,33 @@
+# Technical limitation: Debian 12 does not ship Python 3.10 packages.
+# The mcp library (2.0.0) has known cancel-scope issues on Python 3.11,
+# while the project is tested on Python 3.10. Using python:3.10-slim
+# ensures consistent runtime behavior with the local development environment.
+FROM python:3.10-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip install --break-system-packages --no-cache-dir mcp pandas scikit-learn joblib numpy
+COPY volume_profile_strategy.py volume_profile_strategy.py
+
+COPY TraderAI.py TraderAI.py
+COPY trader_config.py trader_config.py
+COPY ai_model.py ai_model.py
+COPY data_preparation.py data_preparation.py
+COPY feedback_loop.py feedback_loop.py
+COPY trade_executor.py trade_executor.py
+COPY trade_logger.py trade_logger.py
+COPY volume_profile_strategy.py volume_profile_strategy.py
+
+EXPOSE 8155
+
+CMD ["python", "TraderAI.py"]

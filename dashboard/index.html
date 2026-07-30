@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cTraderMCP Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm">55</div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-white">cTraderMCP</h1>
+                        <p class="text-xs text-gray-400">US500 AI Trading Assistant</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 text-sm">
+                    <span class="text-gray-400">v1.0.0</span>
+                    <span class="text-gray-600">|</span>
+                    <span id="deployment-time" class="text-gray-400">--</span>
+                    <span id="trader-status" class="px-2 py-1 rounded-full bg-gray-800 text-gray-400 text-xs border border-gray-700">Unknown</span>
+                    <button id="btn-start-trader" class="px-3 py-1.5 bg-green-900/40 hover:bg-green-900/60 border border-green-700 text-green-400 rounded-lg text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Start</button>
+                    <button id="btn-stop-trader" class="px-3 py-1.5 bg-red-900/40 hover:bg-red-900/60 border border-red-700 text-red-400 rounded-lg text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Stop</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Stats Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="stat-card bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <div class="text-sm text-gray-400 mb-1">Total Trades</div>
+                <div id="stat-total" class="text-2xl font-bold text-white">--</div>
+                <div class="text-xs text-gray-500 mt-1">events.json</div>
+            </div>
+            <div class="stat-card bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <div class="text-sm text-gray-400 mb-1">Win Rate</div>
+                <div id="stat-winrate" class="text-2xl font-bold text-green-400">--</div>
+                <div class="text-xs text-gray-500 mt-1">profitable trades</div>
+            </div>
+            <div class="stat-card bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <div class="text-sm text-gray-400 mb-1">Net P/L</div>
+                <div id="stat-net-pnl" class="text-2xl font-bold text-cyan-400">--</div>
+                <div class="text-xs text-gray-500 mt-1">total profit/loss</div>
+            </div>
+            <div class="stat-card bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <div class="text-sm text-gray-400 mb-1">Avg P/L per Trade</div>
+                <div id="stat-avg-pnl" class="text-2xl font-bold text-blue-400">--</div>
+                <div class="text-xs text-gray-500 mt-1">per trade</div>
+            </div>
+        </section>
+
+        <!-- Chart Section -->
+        <section class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-white">Price Chart & Trade Markers</h2>
+                <div class="flex items-center gap-3">
+                    <div class="flex gap-4 text-xs">
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-green-500 rounded"></span> Entry</span>
+                        <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-red-500 rounded"></span> Exit</span>
+                    </div>
+                    <button id="reset-chart-zoom" class="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-gray-300 transition-colors">Reset Zoom</button>
+                </div>
+            </div>
+            <div class="relative h-80">
+                <canvas id="priceChart"></canvas>
+            </div>
+            <div id="chart-empty" class="hidden text-center text-gray-500 py-12">No trade data available yet.</div>
+        </section>
+
+        <!-- Model Info & Last Trade -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <h2 class="text-lg font-semibold text-white mb-4">Model Information</h2>
+                <div id="model-info" class="space-y-3 text-sm">
+                    <div class="animate-pulse bg-gray-800 h-4 rounded w-3/4"></div>
+                    <div class="animate-pulse bg-gray-800 h-4 rounded w-1/2"></div>
+                </div>
+            </div>
+            <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <h2 class="text-lg font-semibold text-white mb-4">Last Trade</h2>
+                <div id="last-trade" class="text-sm text-gray-400">No trades yet.</div>
+            </div>
+        </section>
+
+        <!-- Logs -->
+        <section class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-white">Live Logs</h2>
+                <div class="flex gap-2">
+                    <button id="copy-logs" class="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-gray-300 transition-colors">Copy</button>
+                    <button id="refresh-logs" class="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-gray-300 transition-colors">Refresh</button>
+                </div>
+            </div>
+            <div id="log-container" class="bg-gray-950 rounded-lg border border-gray-800 p-4 h-64 overflow-y-auto font-mono text-xs leading-relaxed">
+                <div class="text-gray-500">Loading logs...</div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-gray-800 mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-xs text-gray-500">
+            cTraderMCP Dashboard &middot; Project 55 &middot; Author: Inventions4All - github:TWeb79
+        </div>
+    </footer>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,44 +1,67 @@
-# Implementation Plan: Ollama SL/TP Recommendation + Trailing SL Fix
+# Implementation Plan: Docker Setup + Web Dashboard for cTraderMCP
 
 ## Objective
-Implement one-time Ollama-based stop-loss and take-profit recommendation immediately after a position is opened, then use only trailing stop-loss for position management.
+Add a Dockerized deployment and a modern web dashboard (port 8055) that visualizes:
+- Trained model metadata
+- Price chart with trade entry/exit markers
+- Live log streaming
+- High-level P/L statistics and trade counts from events.json
 
-## Changes Required
+## Directory Structure
+```
+55-cTraderMCP/
+├── docker/
+│   ├── Dockerfile.trader
+│   └── Dockerfile.dashboard
+├── dashboard/
+│   ├── __init__.py
+│   ├── main.py            # FastAPI backend
+│   ├── index.html         # SPA dashboard
+│   └── static/
+│       ├── css/
+│       │   └── dashboard.css
+│       └── js/
+│           └── dashboard.js
+├── docker-compose.yml
+├── requirements-dashboard.txt
+└── ...
+```
 
-### 1. Fix Trailing SL Bug
-- In `run_volume_profile_strategy` (line ~824): change `close_position` to `amend_position`
-- In `main()` ollama loop (line ~1081): change `close_position` to `amend_position`
+## Step 1: Docker Setup
+- Create `docker/Dockerfile.trader` based on `debian:12-slim` with Python 3.10
+- Create `docker/Dockerfile.dashboard` based on `debian:12-slim` with Python 3.10 + FastAPI/uvicorn
+- Create `docker-compose.yml` with two services: `trader` and `dashboard`
+- Use volume mounts for `events.json`, `trader.log`, `trade_history.json`, `trading_model.joblib`, `trading_scaler.joblib`
+- Expose port 8055 for dashboard, keep existing ports for trader
 
-### 2. Add `ask_ollama_for_sl_tp_recommendation` Function
-- Create a new Ollama prompt function that returns JSON: `{"stop_loss": float, "take_profit": float, "reasoning": str}`
-- Inputs: model, symbol, current_price, position details, strategy, intraday candles
-- Outputs: recommended absolute SL/TP price levels
+## Step 2: FastAPI Dashboard Backend
+Endpoints:
+- `GET /` — serve `index.html`
+- `GET /api/stats` — P/L summary, trade count, win rate from events.json
+- `GET /api/trades` — recent trade list with entry/exit prices, P/L
+- `GET /api/model-info` — model metadata (type, training date, feature importance if available)
+- `GET /api/logs` — tail of trader.log
+- `GET /api/candles` — historical candles for chart (fallback to static sample if none)
 
-### 3. Integrate in Volume Profile Strategy Path
-- After placing a volume profile trade (line ~914) and magnet trade (line ~939):
-  - Fetch updated positions to get new position details
-  - If position not yet processed for Ollama SL/TP:
-    - Call `ask_ollama_for_sl_tp_recommendation`
-    - Amend position with recommended SL and TP
-    - Mark position as processed
-- Track processed positions with a set (`ollama_sl_tp_processed`)
+## Step 3: Frontend Dashboard
+- Single-page app with Tailwind CSS (CDN) + Chart.js
+- Sections:
+  1. **Header**: Project name, version, deployment datetime
+  2. **Stats Cards**: Total trades, win rate, net P/L, avg P/L per trade
+  3. **Chart**: Candlestick-style line chart with markers for trade entries (green ▲) and exits (red ▼)
+  4. **Model Info**: Model type, training sample count, last trained timestamp
+  5. **Logs**: Scrollable log viewer with auto-refresh
 
-### 4. Integrate in Main Ollama Strategy Path
-- After `place_trade` in main loop (line ~1115):
-  - Capture trade result and extract position ID
-  - Fetch updated positions
-  - If position not yet processed for Ollama SL/TP:
-    - Call `ask_ollama_for_sl_tp_recommendation`
-    - Amend position with recommended SL and TP
-    - Mark position as processed
-- Track processed positions with a set (`ollama_sl_tp_processed`)
+## Step 4: Data Adapters
+- `dashboard/stats.py` — compute stats from events.json
+- `dashboard/model_info.py` — inspect joblib model metadata
+- `dashboard/log_reader.py` — tail trader.log safely
 
-### 5. Position Management Behavior
-- After initial Ollama SL/TP is applied, position management only trails SL
-- No further TP adjustments after initial recommendation
-- Existing `ask_ollama_for_position_management` already returns TRAIL_SL/CLOSE/HOLD — no changes needed there
+## Step 5: Integration
+- Update `TraderAI.py` to optionally expose metrics endpoint OR keep dashboard as separate reader
+- Ensure file paths are configurable via env vars for Docker
+- Update `.gitignore` for Docker artifacts if needed
 
-## Verification
-- Run lint/typecheck if available
-- Review logic for both strategy paths
-- Confirm dry_run logging is correct
+## Step 6: Documentation
+- Update README.md with Docker instructions
+- Update ARCHITECTURE.md with dashboard service

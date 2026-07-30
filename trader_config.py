@@ -26,7 +26,7 @@ DEPLOYMENT_DATETIME = "2026-07-30T17:53:53+02:00"
 CONFIG = {
     # --- cTrader MCP server connection ---
     "mcp_transport": "http",
-    "mcp_url": "http://127.0.0.1:9876/mcp",
+    "mcp_url": os.environ.get("MCP_URL", "http://127.0.0.1:9876/mcp"),
 
     # --- ML Model Configuration ---
     "ml_model_path": "trading_model.joblib",

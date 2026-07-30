@@ -11,6 +11,7 @@ This project implements an AI-powered trading assistant that connects to a cTrad
 - Implements a feedback loop that records outcomes and retrains periodically
 - Includes risk management with configurable stop-loss and take-profit
 - Dry-run mode for safe testing
+- **Web dashboard** (port 8055) with live stats, price chart, model info, log viewer, and start/stop controls
 
 ## Port Allocations (project 55)
 
@@ -26,7 +27,8 @@ Before running this script, ensure you have:
 
 1. **Python 3.10+** installed (tested with 3.10.20)
 2. **cTrader Desktop** with MCP server running (default: http://127.0.0.1:9876/mcp)
-3. Required Python packages (see Installation)
+3. **Docker & Docker Compose** (recommended for dashboard and isolated deployment)
+4. Required Python packages (see Installation)
 
 ## Installation
 
@@ -35,10 +37,24 @@ Before running this script, ensure you have:
 pip install -r requirements.txt
 ```
 
-### 2. Start cTrader MCP Server
+### 2. Install Dashboard Dependencies (if running dashboard locally)
+```bash
+pip install -r requirements-dashboard.txt
+```
+
+### 3. Docker Deployment (Recommended)
+```bash
+docker compose up --build
+```
+
+This starts:
+- `55-cTraderMCP-trader` — the trading algorithm
+- `55-cTraderMCP-dashboard` — the web UI on http://localhost:8055
+
+### 4. Start cTrader MCP Server
 Ensure your cTrader Desktop application is running and the MCP server is active on port 9876.
 
-### 3. Verify ports.env
+### 5. Verify ports.env
 Check `ports.env` for the project's port assignments.
 
 ## Configuration
@@ -78,6 +94,15 @@ Change `"dry_run": False` in the CONFIG and ensure you are using a demo account.
 ### 3. Test Run
 Set `"max_loop_iterations": 5` in CONFIG for a limited test run.
 
+### 4. Web Dashboard
+Open http://localhost:8055 to view:
+- **Stats Cards**: Total trades, win rate, net P/L, avg P/L per trade
+- **Price Chart**: Trade entry (green ▲) and exit (red ▼) markers
+- **Model Info**: Model type, feature count, last trained timestamp
+- **Last Trade**: Most recent trade details
+- **Live Logs**: Tail of `trader.log` with auto-refresh
+- **Trader Controls**: Start/Stop buttons for the trading algorithm
+
 ## How It Works
 
 1. **Data Preparation** — Loads historical OHLCV candles from cTrader MCP and trade events from `events.json`.
@@ -91,6 +116,7 @@ Set `"max_loop_iterations": 5` in CONFIG for a limited test run.
 - **Position Limits**: Configurable maximum concurrent positions
 - **Risk Parameters**: Adjustable stop-loss and take-profit levels
 - **Manual Review**: All trading decisions are logged for review
+- **Container Control**: Start/stop the trader safely from the dashboard
 
 ## Project Files
 
@@ -102,8 +128,12 @@ Set `"max_loop_iterations": 5` in CONFIG for a limited test run.
 | ai_model.py | Step 2: train model + Step 3: predict |
 | feedback_loop.py | Step 4: record outcomes and retrain |
 | trade_executor.py | cTrader MCP client wrapper |
-| trade_logger.py | Trade state persistence (events.json) |
+| trade_logger.py | Trade state persistence (events.json formatting) |
 | volume_profile_strategy.py | Volume profile strategy module |
+| dashboard/ | Web dashboard (FastAPI backend + static frontend) |
+| docker-compose.yml | Docker services definition |
+| docker/Dockerfile.trader | Trader container image |
+| docker/Dockerfile.dashboard | Dashboard container image |
 
 ## Important Disclaimers
 

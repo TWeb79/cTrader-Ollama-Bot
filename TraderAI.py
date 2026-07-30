@@ -357,7 +357,24 @@ async def main() -> None:
 
     config = CONFIG
     client = CTraderMCPClient(config)
-    await client.connect()
+
+    max_retries = 10
+    retry_delay = 5
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            log.info("Connecting to cTrader MCP server (attempt %d/%d)...", attempt, max_retries)
+            await client.connect()
+            log.info("Connected to cTrader MCP server.")
+            break
+        except (Exception, RuntimeError) as exc:
+            log.warning("Connection attempt %d failed: %s", attempt, exc)
+            if attempt >= max_retries:
+                log.error("Max connection retries reached — exiting.")
+                return
+            import time
+            time.sleep(retry_delay)
+            retry_delay = min(retry_delay * 2, 60)
 
     try:
         # Step 1: Data Preparation
@@ -384,49 +401,55 @@ async def main() -> None:
         iterations = 0
 
         while True:
-            log.debug("--- Live Monitoring iteration %d ---", iterations + 1)
-            quote = await client.call(TOOL_NAMES["current_price"], {"symbolName": config["symbol"]})
-            current_price = quote.get("bid") or quote.get("price") if isinstance(quote, dict) else quote
+            try:
+                log.debug("--- Live Monitoring iteration %d ---", iterations + 1)
+                quote = await client.call(TOOL_NAMES["current_price"], {"symbolName": config["symbol"]})
+                current_price = quote.get("bid") or quote.get("price") if isinstance(quote, dict) else quote
 
-            intraday_candles = await fetch_historical_candles(client, config, TOOL_NAMES)
-            indicators = _compute_live_indicators(intraday_candles)
+                intraday_candles = await fetch_historical_candles(client, config, TOOL_NAMES)
+                indicators = _compute_live_indicators(intraday_candles)
 
-            signal = predict_signal(model_trainer, indicators)
-            log.info("ML trading signal: %s", signal)
+                signal = predict_signal(model_trainer, indicators)
+                log.info("ML trading signal: %s", signal)
 
-            if signal in ("BUY", "SELL") and config.get("max_open_positions", 1) > 0:
-                log.info("ML signal %s — executing trade.", signal)
-                if config["dry_run"]:
-                    log.info("[DRY RUN] ML trade: %s %s", signal, config["symbol"])
-                else:
-                    sl_pips = config["stop_loss_points"]
-                    tp_pips = config["take_profit_points"]
-                    order_args = {
-                        "symbolName": config["symbol"],
-                        "side": "buy" if signal == "BUY" else "sell",
-                        "volume": config["trade_volume"],
-                        "volumeType": "lots",
-                        "stopLossPips": round(sl_pips, 2),
-                        "takeProfitPips": round(tp_pips, 2),
-                    }
-                    result = await client.call(TOOL_NAMES["place_order"], order_args)
-                    log.info("Order result: %s", result)
+                if signal in ("BUY", "SELL") and config.get("max_open_positions", 1) > 0:
+                    log.info("ML signal %s — executing trade.", signal)
+                    if config["dry_run"]:
+                        log.info("[DRY RUN] ML trade: %s %s", signal, config["symbol"])
+                    else:
+                        sl_pips = config["stop_loss_points"]
+                        tp_pips = config["take_profit_points"]
+                        order_args = {
+                            "symbolName": config["symbol"],
+                            "side": "buy" if signal == "BUY" else "sell",
+                            "volume": config["trade_volume"],
+                            "volumeType": "lots",
+                            "stopLossPips": round(sl_pips, 2),
+                            "takeProfitPips": round(tp_pips, 2),
+                        }
+                        result = await client.call(TOOL_NAMES["place_order"], order_args)
+                        log.info("Order result: %s", result)
 
-            # Step 4: Feedback Loop
-            log.info("=== Step 4: Feedback Loop ===")
-            deals = await client.call(TOOL_NAMES["list_deals"], {})
-            deal_list = deals if isinstance(deals, list) else deals.get("deals", deals.get("items", [])) if isinstance(deals, dict) else []
-            for deal in deal_list:
-                if str(deal.get("symbol", deal.get("symbolName", ""))).upper() == "US500":
-                    process_trade_feedback(model_trainer, deal, config)
+                # Step 4: Feedback Loop
+                log.info("=== Step 4: Feedback Loop ===")
+                deals = await client.call(TOOL_NAMES["list_deals"], {})
+                deal_list = deals if isinstance(deals, list) else deals.get("deals", deals.get("items", [])) if isinstance(deals, dict) else []
+                for deal in deal_list:
+                    if str(deal.get("symbol", deal.get("symbolName", ""))).upper() == "US500":
+                        process_trade_feedback(model_trainer, deal, config)
 
-            await log_trades(client, config)
+                await log_trades(client, config)
 
-            iterations += 1
-            if config["max_loop_iterations"] and iterations >= config["max_loop_iterations"]:
-                log.info("Reached max_loop_iterations, stopping.")
-                break
-            await asyncio.sleep(config["poll_interval_seconds"])
+                iterations += 1
+                if config["max_loop_iterations"] and iterations >= config["max_loop_iterations"]:
+                    log.info("Reached max_loop_iterations, stopping.")
+                    break
+                import time
+                time.sleep(config["poll_interval_seconds"])
+            except (Exception, RuntimeError) as exc:
+                log.exception("Error in trading loop iteration: %s", exc)
+                import time
+                time.sleep(retry_delay)
 
     finally:
         await client.close()

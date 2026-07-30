@@ -1,0 +1,54 @@
+services:
+  trader:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.trader
+    container_name: 55-cTraderMCP-trader
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MCP_URL=http://127.0.0.1:9876/mcp/
+      - HOST_GATEWAY=192.168.65.254
+    volumes:
+      - ./events.json:/app/events.json
+      - ./trader.log:/app/trader.log
+      - ./trade_history.json:/app/trade_history.json
+      - ./trading_model.joblib:/app/trading_model.joblib
+      - ./trading_scaler.joblib:/app/trading_scaler.joblib
+      - ./ports.env:/app/ports.env
+    ports:
+      - "8155:8155"
+    networks:
+      - ctrader-net
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dashboard
+    container_name: 55-cTraderMCP-dashboard
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - EVENTS_FILE=/data/events.json
+      - TRADE_HISTORY_FILE=/data/trade_history.json
+      - MODEL_PATH=/data/trading_model.joblib
+      - SCALER_PATH=/data/trading_scaler.joblib
+      - LOG_FILE=/data/trader.log
+      - TRADER_CONTAINER=55-cTraderMCP-trader
+    volumes:
+      - ./events.json:/data/events.json
+      - ./trade_history.json:/data/trade_history.json
+      - ./trading_model.joblib:/data/trading_model.joblib
+      - ./trading_scaler.joblib:/data/trading_scaler.joblib
+      - ./trader.log:/data/trader.log
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8055:8055"
+    depends_on:
+      - trader
+    networks:
+      - ctrader-net
+
+networks:
+  ctrader-net:
+    driver: bridge
