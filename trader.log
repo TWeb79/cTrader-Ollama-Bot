@@ -19107,3 +19107,606 @@ RuntimeError: Attempted to exit cancel scope in a different task than it was ent
 2026-07-30 19:27:11,367 [DEBUG] receive_response_body.complete
 2026-07-30 19:27:11,368 [DEBUG] response_closed.started
 2026-07-30 19:27:11,368 [DEBUG] response_closed.complete
+2026-07-30 19:33:29,351 [DEBUG] --- Polling iteration 8 ---
+2026-07-30 19:33:29,356 [DEBUG] Sending client message: jsonrpc='2.0' id=53 method='tools/call' params={'name': 'get_positions', 'arguments': {}, '_meta': {}}
+2026-07-30 19:33:29,362 [DEBUG] close.started
+2026-07-30 19:33:29,362 [DEBUG] close.complete
+2026-07-30 19:33:29,362 [DEBUG] connect_tcp.started host='127.0.0.1' port=9876 local_address=None timeout=30.0 socket_options=None
+2026-07-30 19:33:29,364 [DEBUG] connect_tcp.complete return_value=<httpcore2._backends.anyio.AnyIOStream object at 0x10f67b880>
+2026-07-30 19:33:29,364 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 19:33:29,364 [DEBUG] send_request_headers.complete
+2026-07-30 19:33:29,364 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 19:33:29,365 [DEBUG] send_request_body.complete
+2026-07-30 19:33:29,365 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 19:33:29,365 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 17:33:29 GMT'), (b'Content-Length', b'100')])
+2026-07-30 19:33:29,368 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 19:33:29,369 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 19:33:29,369 [DEBUG] receive_response_body.complete
+2026-07-30 19:33:29,369 [DEBUG] response_closed.started
+2026-07-30 19:33:29,369 [DEBUG] response_closed.complete
+2026-07-30 19:33:29,372 [DEBUG] Raw positions response: {'positions': []}
+2026-07-30 19:33:29,372 [INFO] Open positions: 0 / 1
+2026-07-30 19:33:29,373 [DEBUG] Sending client message: jsonrpc='2.0' id=54 method='tools/call' params={'name': 'get_spot_prices', 'arguments': {'symbolName': 'US500'}, '_meta': {}}
+2026-07-30 19:33:29,374 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 19:33:29,378 [DEBUG] send_request_headers.complete
+2026-07-30 19:33:29,378 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 19:33:29,378 [DEBUG] send_request_body.complete
+2026-07-30 19:33:29,378 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 19:33:29,379 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 17:33:29 GMT'), (b'Content-Length', b'116')])
+2026-07-30 19:33:29,379 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 19:33:29,379 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 19:33:29,379 [DEBUG] receive_response_body.complete
+2026-07-30 19:33:29,379 [DEBUG] response_closed.started
+2026-07-30 19:33:29,379 [DEBUG] response_closed.complete
+2026-07-30 19:33:29,381 [DEBUG] Raw price quote response: 'Symbol not available: US500'
+2026-07-30 19:33:29,381 [INFO] Current US500 price: Symbol not available: US500
+2026-07-30 19:33:29,381 [DEBUG] Price type: str
+2026-07-30 19:33:29,381 [DEBUG] Calling Ollama for live signal (model=qwen2.5-coder:7b)
+2026-07-30 19:33:29,381 [DEBUG] Fetching intraday candles: {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-07-30T00:00:00', 'to': '2026-07-30T17:33:29.381519'}
+2026-07-30 19:33:29,385 [DEBUG] Sending client message: jsonrpc='2.0' id=55 method='tools/call' params={'name': 'get_trendbars', 'arguments': {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-07-30T00:00:00', 'to': '2026-07-30T17:33:29.381519'}, '_meta': {}}
+2026-07-30 19:33:29,386 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 19:33:29,386 [DEBUG] send_request_headers.complete
+2026-07-30 19:33:29,386 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 19:33:29,386 [DEBUG] send_request_body.complete
+2026-07-30 19:33:29,386 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 19:33:29,387 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 17:33:29 GMT'), (b'Content-Length', b'116')])
+2026-07-30 19:33:29,387 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 19:33:29,387 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 19:33:29,387 [DEBUG] receive_response_body.complete
+2026-07-30 19:33:29,388 [DEBUG] response_closed.started
+2026-07-30 19:33:29,388 [DEBUG] response_closed.complete
+2026-07-30 19:33:29,389 [DEBUG] send_request_headers.started request=<Request [b'DELETE']>
+2026-07-30 19:33:29,390 [DEBUG] send_request_headers.complete
+2026-07-30 19:33:29,390 [DEBUG] send_request_body.started request=<Request [b'DELETE']>
+2026-07-30 19:33:29,390 [DEBUG] send_request_body.complete
+2026-07-30 19:33:29,390 [DEBUG] receive_response_headers.started request=<Request [b'DELETE']>
+2026-07-30 19:33:29,391 [DEBUG] receive_response_body.complete
+2026-07-30 19:33:29,392 [DEBUG] response_closed.started
+2026-07-30 19:33:29,392 [DEBUG] response_closed.complete
+2026-07-30 19:33:29,392 [INFO] GET stream disconnected, reconnecting in 1000ms...
+2026-07-30 19:33:29,394 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 204, b'No Content', [(b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 17:33:29 GMT'), (b'Content-Length', b'0')])
+2026-07-30 19:33:29,394 [INFO] HTTP Request: DELETE http://127.0.0.1:9876/mcp "HTTP/1.1 204 No Content"
+2026-07-30 19:33:29,394 [DEBUG] receive_response_body.started request=<Request [b'DELETE']>
+2026-07-30 19:33:29,394 [DEBUG] receive_response_body.complete
+2026-07-30 19:33:29,396 [DEBUG] response_closed.started
+2026-07-30 19:33:29,396 [DEBUG] response_closed.complete
+2026-07-30 19:33:29,398 [DEBUG] close.started
+2026-07-30 19:33:29,398 [DEBUG] close.complete
+2026-07-30 19:33:29,398 [DEBUG] close.started
+2026-07-30 19:33:29,398 [DEBUG] close.complete
+2026-07-30 22:04:43,633 [DEBUG] Using selector: KqueueSelector
+2026-07-30 22:04:43,633 [INFO] Project 55 port mapping: {'dashboard': 8055, 'fastapi': 8155, 'database': 8255, 'llm': 8955}
+2026-07-30 22:04:43,673 [DEBUG] Connecting to StreamableHTTP endpoint: http://127.0.0.1:9876/mcp
+2026-07-30 22:04:43,676 [DEBUG] Sending client message: jsonrpc='2.0' id=1 method='initialize' params={'protocolVersion': '2025-11-25', 'capabilities': {}, 'clientInfo': {'name': 'mcp', 'version': '0.1.0'}, '_meta': {}}
+2026-07-30 22:04:43,676 [DEBUG] connect_tcp.started host='127.0.0.1' port=9876 local_address=None timeout=30.0 socket_options=None
+2026-07-30 22:04:43,677 [DEBUG] connect_tcp.complete return_value=<httpcore2._backends.anyio.AnyIOStream object at 0x113cfe1a0>
+2026-07-30 22:04:43,677 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:43,677 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:43,677 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:43,677 [DEBUG] send_request_body.complete
+2026-07-30 22:04:43,677 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:43,678 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Mcp-Session-Id', b'da971c3555784ef0bfb237a9c101f332'), (b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:43 GMT'), (b'Content-Length', b'183')])
+2026-07-30 22:04:43,678 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:43,678 [INFO] Received session ID: da971c3555784ef0bfb237a9c101f332
+2026-07-30 22:04:43,678 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:43,678 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:43,678 [DEBUG] response_closed.started
+2026-07-30 22:04:43,678 [DEBUG] response_closed.complete
+2026-07-30 22:04:43,681 [DEBUG] Sending client message: jsonrpc='2.0' method='notifications/initialized' params=None
+2026-07-30 22:04:43,681 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:43,681 [DEBUG] connect_tcp.started host='127.0.0.1' port=9876 local_address=None timeout=30.0 socket_options=None
+2026-07-30 22:04:43,681 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:43,682 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:43,682 [DEBUG] send_request_body.complete
+2026-07-30 22:04:43,682 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:43,682 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 202, b'Accepted', [(b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:43 GMT'), (b'Content-Length', b'0')])
+2026-07-30 22:04:43,682 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 202 Accepted"
+2026-07-30 22:04:43,682 [DEBUG] Received 202 Accepted
+2026-07-30 22:04:43,682 [DEBUG] response_closed.started
+2026-07-30 22:04:43,682 [DEBUG] connect_tcp.complete return_value=<httpcore2._backends.anyio.AnyIOStream object at 0x113da5360>
+2026-07-30 22:04:43,682 [DEBUG] send_request_headers.started request=<Request [b'GET']>
+2026-07-30 22:04:43,682 [DEBUG] response_closed.complete
+2026-07-30 22:04:43,682 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:43,682 [DEBUG] send_request_body.started request=<Request [b'GET']>
+2026-07-30 22:04:43,683 [DEBUG] send_request_body.complete
+2026-07-30 22:04:43,683 [DEBUG] receive_response_headers.started request=<Request [b'GET']>
+2026-07-30 22:04:43,683 [DEBUG] Sending client message: jsonrpc='2.0' id=2 method='tools/list' params={'_meta': {}}
+2026-07-30 22:04:43,683 [DEBUG] connect_tcp.started host='127.0.0.1' port=9876 local_address=None timeout=30.0 socket_options=None
+2026-07-30 22:04:43,683 [DEBUG] connect_tcp.complete return_value=<httpcore2._backends.anyio.AnyIOStream object at 0x113cff370>
+2026-07-30 22:04:43,683 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:43,683 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:43,683 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:43,684 [DEBUG] send_request_body.complete
+2026-07-30 22:04:43,684 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:43,685 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:43 GMT'), (b'Content-Length', b'43223')])
+2026-07-30 22:04:43,685 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:43,685 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:43,685 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:43,685 [DEBUG] response_closed.started
+2026-07-30 22:04:43,685 [DEBUG] response_closed.complete
+2026-07-30 22:04:43,686 [INFO] Connected to cTrader MCP server. Available tools:
+2026-07-30 22:04:43,686 [INFO]   - get_balance: Get current trading account information including balance, equity, margin, free margin, margin level
+2026-07-30 22:04:43,686 [INFO]   - get_accounts_list: List all available trading accounts (login, broker, balance, currency, type, online status). Exclude
+2026-07-30 22:04:43,686 [INFO]   - get_account_statistics: Get aggregated trading statistics: net profit, total trades, winning/losing trades, profit factor, a
+2026-07-30 22:04:43,686 [INFO]   - create_price_alert: Create a price alert that triggers when a symbol's price crosses a threshold.
+2026-07-30 22:04:43,686 [INFO]   - delete_price_alert: Delete a price alert by its ID.
+2026-07-30 22:04:43,687 [INFO]   - get_price_alerts: Get all active price alerts with id, symbol, price, condition type, quote type, and message.
+2026-07-30 22:04:43,687 [INFO]   - add_chart_object: Add a drawing object to the active chart. Returns objectId for later deletion.  IMPORTANT: All time 
+2026-07-30 22:04:43,687 [INFO]   - apply_chart_template: Apply a chart template by ID to the currently active chart.
+2026-07-30 22:04:43,687 [INFO]   - change_chart_symbol: Change the symbol on the currently active chart.
+2026-07-30 22:04:43,687 [INFO]   - change_chart_timeframe: Change the timeframe on the currently active chart.
+2026-07-30 22:04:43,687 [INFO]   - clear_chart_objects: Delete all drawing objects from the active chart.
+2026-07-30 22:04:43,687 [INFO]   - close_chart: Close a chart by its chart ID (from list_charts).
+2026-07-30 22:04:43,687 [INFO]   - delete_chart_object: Delete a specific drawing object from the active chart by its objectId.
+2026-07-30 22:04:43,687 [INFO]   - delete_chart_template: Delete a saved chart template by its ID.
+2026-07-30 22:04:43,687 [INFO]   - focus_chart: Make a chart active/focused by its chart ID (from list_charts).
+2026-07-30 22:04:43,687 [INFO]   - get_active_chart: Get information about the currently active chart (chartId, symbol and timeframe).
+2026-07-30 22:04:43,687 [INFO]   - get_chart_objects: List all drawing objects on the active chart with their objectId, type, and name.
+2026-07-30 22:04:43,687 [INFO]   - get_chart_viewport: Get the active chart's scroll position and zoom level (visible bars count).
+2026-07-30 22:04:43,687 [INFO]   - list_charts: List all open charts with their IDs, symbols, timeframes, and which is currently active.
+2026-07-30 22:04:43,687 [INFO]   - list_chart_templates: List available custom chart templates.
+2026-07-30 22:04:43,687 [INFO]   - open_chart: Open a new chart tab for the given symbol, optionally with a timeframe.
+2026-07-30 22:04:43,687 [INFO]   - save_chart_template: Save the current active chart's settings as a named template.
+2026-07-30 22:04:43,687 [INFO]   - scroll_chart: Scroll the active chart. Use startIndex for an absolute target or offsetBars for movement relative t
+2026-07-30 22:04:43,687 [INFO]   - update_chart_object: Update an existing drawing object on the active chart. Only provided fields are changed; omitted fie
+2026-07-30 22:04:43,687 [INFO]   - zoom_chart: Set the number of visible bars on the active chart (zoom level). Fewer bars = more zoomed in.
+2026-07-30 22:04:43,687 [INFO]   - get_server_time: Get the current server time in UTC, local, and Unix milliseconds.
+2026-07-30 22:04:43,687 [INFO]   - addChartIndicator: Add an indicator to the active chart by its type name (e.g. 'Simple Moving Average'). Use listChartI
+2026-07-30 22:04:43,687 [INFO]   - getIndicatorValues: Get the most recent computed values from an indicator output line on the active chart.
+2026-07-30 22:04:43,687 [INFO]   - listAvailableIndicators: List all available indicator types that can be added to a chart via addChartIndicator. Returns title
+2026-07-30 22:04:43,687 [INFO]   - listChartIndicators: List all indicators currently attached to the active chart, with their indicatorId, typeName, and ou
+2026-07-30 22:04:43,688 [INFO]   - removeChartIndicator: Remove an indicator from the active chart by its indicatorId (from listChartIndicators).
+2026-07-30 22:04:43,688 [INFO]   - update_indicator_parameters: Update parameters of an indicator on the active chart by its indicatorId (from listChartIndicators).
+2026-07-30 22:04:43,688 [INFO]   - get_trendbars: Get historical OHLC trend bars for a symbol and timeframe in a date range. Server caps each request 
+2026-07-30 22:04:43,688 [INFO]   - get_symbol_details: Get detailed information about a trading symbol: digits, pip size, lot size, min/max volume, categor
+2026-07-30 22:04:43,688 [INFO]   - get_symbols: Get a list of available trading symbols. Optionally filter by name or description.
+2026-07-30 22:04:43,688 [INFO]   - get_spot_prices: Get the current quote (bid, ask, spread, high, low, open) for a specific trading symbol.
+2026-07-30 22:04:43,688 [INFO]   - get_symbol_sessions: Get the trading sessions (open/close times) for a symbol along with its time zone.
+2026-07-30 22:04:43,688 [INFO]   - get_news: Get recent Fx news items (general or crypto) with title, summary, and publication date.
+2026-07-30 22:04:43,688 [INFO]   - listPlugins: List all available cBot plugins with their pluginId, name, and running status.
+2026-07-30 22:04:43,688 [INFO]   - startPlugin: Start a cBot plugin by its pluginId (from listPlugins).
+2026-07-30 22:04:43,688 [INFO]   - stopPlugin: Stop a running cBot plugin by its pluginId.
+2026-07-30 22:04:43,688 [INFO]   - calculate_margin: Calculate the expected margin required to open a position for a given symbol and volume.
+2026-07-30 22:04:43,688 [INFO]   - cancel_all_pending_orders: Cancel all pending orders.
+2026-07-30 22:04:43,688 [INFO]   - cancel_order: Cancel a pending order by its ID.
+2026-07-30 22:04:43,688 [INFO]   - close_all_positions: Close all open positions, optionally filtered by symbol name.
+2026-07-30 22:04:43,688 [INFO]   - close_position: Close an open trading position by its ID.
+2026-07-30 22:04:43,688 [INFO]   - close_position_partial: Partially close an open trading position by its ID, reducing its volume.
+2026-07-30 22:04:43,688 [INFO]   - get_deals: Get the most recent deals (executed orders), optionally filtered by symbol. Default count: 50, max: 
+2026-07-30 22:04:43,688 [INFO]   - get_pending_orders: Get all pending orders with details: symbol, side, order type, volume (in units and lots), target pr
+2026-07-30 22:04:43,688 [INFO]   - get_positions: Get all open trading positions with details: symbol, side, volume (in units and lots), entry price, 
+2026-07-30 22:04:43,688 [INFO]   - get_order_history: Get closed trade history including symbol, side, volume, entry/close price, pips, profit, and timest
+2026-07-30 22:04:43,688 [INFO]   - amend_order: Modify a pending order's entry price, volume, expiration, stop loss, or take profit.
+2026-07-30 22:04:43,688 [INFO]   - amend_position: Modify the stop loss and/or take profit of an open position (prices, not pips).
+2026-07-30 22:04:43,688 [INFO]   - place_limit_order: Place a limit order that executes when the price reaches the specified level.
+2026-07-30 22:04:43,688 [INFO]   - place_market_order: Place a market order to open a trading position immediately at the current market price.
+2026-07-30 22:04:43,688 [INFO]   - place_stop_limit_order: Place a stop-limit order that triggers at the stop price and then executes as a limit order at the l
+2026-07-30 22:04:43,688 [INFO]   - place_stop_order: Place a stop order that executes when the price crosses the specified level.
+2026-07-30 22:04:43,688 [INFO]   - delete_workspace: Delete a saved workspace by name.
+2026-07-30 22:04:43,688 [INFO]   - get_asp_tab: Get the currently active tab in the Active Symbol Panel.
+2026-07-30 22:04:43,688 [INFO]   - get_current_app: Get the currently active application section: trade, automate, analyze, copy, or invite.
+2026-07-30 22:04:43,688 [INFO]   - get_layout_mode: Get the current main window layout mode: all, asp, trade_watch, or chart_only.
+2026-07-30 22:04:43,688 [INFO]   - get_market_watch_panel: Get the currently active Market Watch panel: watchlists or all_symbols.
+2026-07-30 22:04:43,688 [INFO]   - get_trade_watch_tab: Get the currently active tab in the TradeWatch panel.
+2026-07-30 22:04:43,688 [INFO]   - list_workspaces: List all saved workspaces (layout presets) by name.
+2026-07-30 22:04:43,688 [INFO]   - load_workspace: Load a saved workspace by name, restoring the saved layout and charts.
+2026-07-30 22:04:43,688 [INFO]   - save_workspace: Save the current layout as a named workspace. Creates a new workspace or overwrites an existing one.
+2026-07-30 22:04:43,688 [INFO]   - set_asp_tab: Set the active tab in the Active Symbol Panel. Tabs: symbol, dom, calendar, news, autochartist.
+2026-07-30 22:04:43,688 [INFO]   - set_layout_mode: Set the main window layout mode to show/hide panels. Modes: 'all' (ASP + TradeWatch), 'asp' (ASP onl
+2026-07-30 22:04:43,688 [INFO]   - set_market_watch_panel: Switch the active Market Watch panel to watchlists or all_symbols.
+2026-07-30 22:04:43,688 [INFO]   - set_trade_watch_tab: Switch the active tab in the TradeWatch panel by tab name.
+2026-07-30 22:04:43,688 [INFO]   - show_notification: Show an in-app popup notification with a caption, message, and type.
+2026-07-30 22:04:43,688 [INFO]   - switch_app: Switch to a different application section: trade, automate, analyze, copy, or invite.
+2026-07-30 22:04:43,688 [INFO]   - add_symbol_to_watchlist: Add a symbol to a watchlist by watchlist name.
+2026-07-30 22:04:43,688 [INFO]   - create_watchlist: Create a new (empty) dynamic watchlist with the given name.
+2026-07-30 22:04:43,688 [INFO]   - delete_watchlist: Delete a dynamic watchlist by its name.
+2026-07-30 22:04:43,688 [INFO]   - get_watchlists: Get all watchlists with their names, keys, and the list of symbols in each watchlist.
+2026-07-30 22:04:43,688 [INFO]   - remove_symbol_from_watchlist: Remove a symbol from a watchlist by watchlist name.
+2026-07-30 22:04:43,688 [INFO]   - rename_watchlist: Rename a dynamic watchlist.
+2026-07-30 22:04:43,688 [INFO] === Step 1: Data Preparation ===
+2026-07-30 22:04:43,689 [DEBUG] Fetching historical candles: {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:04:43.688983', 'to': '2026-07-30T20:04:43.688993'}
+2026-07-30 22:04:43,689 [DEBUG] Sending client message: jsonrpc='2.0' id=3 method='tools/call' params={'name': 'get_trendbars', 'arguments': {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:04:43.688983', 'to': '2026-07-30T20:04:43.688993'}, '_meta': {}}
+2026-07-30 22:04:43,690 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:43,691 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:43,691 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:43,691 [DEBUG] send_request_body.complete
+2026-07-30 22:04:43,691 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:44,848 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:44 GMT'), (b'Content-Length', b'87835')])
+2026-07-30 22:04:44,848 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:44,848 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:44,848 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:44,849 [DEBUG] response_closed.started
+2026-07-30 22:04:44,849 [DEBUG] response_closed.complete
+2026-07-30 22:04:44,849 [INFO] Received 500 candle(s) for US500 (timeframe=m5)
+2026-07-30 22:04:44,850 [INFO] Loaded 500 candle(s) and 4 event(s).
+2026-07-30 22:04:44,850 [INFO] === Step 2: Model Training ===
+2026-07-30 22:04:44,850 [INFO] No saved model found at trading_model.joblib
+2026-07-30 22:04:44,850 [INFO] No saved model — training new model from historical data.
+2026-07-30 22:04:44,850 [WARNING] No valid training samples found in events.json
+2026-07-30 22:04:44,850 [WARNING] No training data available — cannot train model
+2026-07-30 22:04:44,850 [INFO] === Step 3: Integration — Live Trading Loop ===
+2026-07-30 22:04:44,850 [DEBUG] --- Live Monitoring iteration 1 ---
+2026-07-30 22:04:44,850 [DEBUG] Sending client message: jsonrpc='2.0' id=4 method='tools/call' params={'name': 'get_spot_prices', 'arguments': {'symbolName': 'US500'}, '_meta': {}}
+2026-07-30 22:04:44,851 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:44,851 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:44,851 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:44,851 [DEBUG] send_request_body.complete
+2026-07-30 22:04:44,851 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:44,851 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:44 GMT'), (b'Content-Length', b'255')])
+2026-07-30 22:04:44,851 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:44,851 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:44,851 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:44,852 [DEBUG] response_closed.started
+2026-07-30 22:04:44,852 [DEBUG] response_closed.complete
+2026-07-30 22:04:44,852 [DEBUG] Fetching historical candles: {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:04:44.852258', 'to': '2026-07-30T20:04:44.852263'}
+2026-07-30 22:04:44,852 [DEBUG] Sending client message: jsonrpc='2.0' id=5 method='tools/call' params={'name': 'get_trendbars', 'arguments': {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:04:44.852258', 'to': '2026-07-30T20:04:44.852263'}, '_meta': {}}
+2026-07-30 22:04:44,852 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:44,852 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:44,852 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:44,852 [DEBUG] send_request_body.complete
+2026-07-30 22:04:44,852 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,545 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:45 GMT'), (b'Content-Length', b'87835')])
+2026-07-30 22:04:45,545 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:45,545 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,545 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:45,546 [DEBUG] response_closed.started
+2026-07-30 22:04:45,546 [DEBUG] response_closed.complete
+2026-07-30 22:04:45,546 [INFO] Received 500 candle(s) for US500 (timeframe=m5)
+2026-07-30 22:04:45,556 [WARNING] No ML model loaded — returning neutral default
+2026-07-30 22:04:45,556 [INFO] ML signal: bias=neutral confidence=0.00
+2026-07-30 22:04:45,556 [INFO] ML trading signal: NEUTRAL
+2026-07-30 22:04:45,556 [INFO] === Step 4: Feedback Loop ===
+2026-07-30 22:04:45,557 [DEBUG] Sending client message: jsonrpc='2.0' id=6 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:04:45,558 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,558 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:45,558 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,558 [DEBUG] send_request_body.complete
+2026-07-30 22:04:45,558 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,560 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:45 GMT'), (b'Content-Length', b'2201')])
+2026-07-30 22:04:45,560 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:45,560 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,560 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:45,560 [DEBUG] response_closed.started
+2026-07-30 22:04:45,560 [DEBUG] response_closed.complete
+2026-07-30 22:04:45,563 [DEBUG] Sending client message: jsonrpc='2.0' id=7 method='tools/call' params={'name': 'get_positions', 'arguments': {}, '_meta': {}}
+2026-07-30 22:04:45,564 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,564 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:45,564 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,564 [DEBUG] send_request_body.complete
+2026-07-30 22:04:45,565 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,565 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:45 GMT'), (b'Content-Length', b'99')])
+2026-07-30 22:04:45,565 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:45,565 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,565 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:45,565 [DEBUG] response_closed.started
+2026-07-30 22:04:45,565 [DEBUG] response_closed.complete
+2026-07-30 22:04:45,566 [DEBUG] Sending client message: jsonrpc='2.0' id=8 method='tools/call' params={'name': 'get_pending_orders', 'arguments': {}, '_meta': {}}
+2026-07-30 22:04:45,566 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,566 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:45,566 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,566 [DEBUG] send_request_body.complete
+2026-07-30 22:04:45,566 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,567 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:45 GMT'), (b'Content-Length', b'96')])
+2026-07-30 22:04:45,567 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:45,567 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,567 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:45,567 [DEBUG] response_closed.started
+2026-07-30 22:04:45,567 [DEBUG] response_closed.complete
+2026-07-30 22:04:45,567 [DEBUG] Sending client message: jsonrpc='2.0' id=9 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:04:45,567 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,567 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:45,568 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,568 [DEBUG] send_request_body.complete
+2026-07-30 22:04:45,568 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,568 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:45 GMT'), (b'Content-Length', b'2201')])
+2026-07-30 22:04:45,568 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:45,568 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,568 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:45,569 [DEBUG] response_closed.started
+2026-07-30 22:04:45,569 [DEBUG] response_closed.complete
+2026-07-30 22:04:45,569 [DEBUG] Sending client message: jsonrpc='2.0' id=10 method='tools/call' params={'name': 'get_order_history', 'arguments': {}, '_meta': {}}
+2026-07-30 22:04:45,569 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,570 [DEBUG] send_request_headers.complete
+2026-07-30 22:04:45,570 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,570 [DEBUG] send_request_body.complete
+2026-07-30 22:04:45,570 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:04:45,570 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:45 GMT'), (b'Content-Length', b'2119')])
+2026-07-30 22:04:45,570 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:45,570 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:04:45,570 [DEBUG] receive_response_body.complete
+2026-07-30 22:04:45,570 [DEBUG] response_closed.started
+2026-07-30 22:04:45,570 [DEBUG] response_closed.complete
+2026-07-30 22:04:58,683 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'text/event-stream'), (b'Cache-Control', b'no-cache, no-transform'), (b'Connection', b'keep-alive'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:04:58 GMT'), (b'Transfer-Encoding', b'chunked')])
+2026-07-30 22:04:58,683 [INFO] HTTP Request: GET http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:04:58,684 [DEBUG] GET SSE connection established
+2026-07-30 22:04:58,684 [DEBUG] receive_response_body.started request=<Request [b'GET']>
+2026-07-30 22:05:45,571 [DEBUG] --- Live Monitoring iteration 2 ---
+2026-07-30 22:05:45,576 [DEBUG] Sending client message: jsonrpc='2.0' id=11 method='tools/call' params={'name': 'get_spot_prices', 'arguments': {'symbolName': 'US500'}, '_meta': {}}
+2026-07-30 22:05:45,577 [DEBUG] close.started
+2026-07-30 22:05:45,577 [DEBUG] close.complete
+2026-07-30 22:05:45,577 [DEBUG] connect_tcp.started host='127.0.0.1' port=9876 local_address=None timeout=30.0 socket_options=None
+2026-07-30 22:05:45,578 [DEBUG] connect_tcp.complete return_value=<httpcore2._backends.anyio.AnyIOStream object at 0x113da7070>
+2026-07-30 22:05:45,578 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:45,578 [DEBUG] send_request_headers.complete
+2026-07-30 22:05:45,578 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:05:45,578 [DEBUG] send_request_body.complete
+2026-07-30 22:05:45,578 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:45,578 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:05:45 GMT'), (b'Content-Length', b'256')])
+2026-07-30 22:05:45,578 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:05:45,579 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:05:45,579 [DEBUG] receive_response_body.complete
+2026-07-30 22:05:45,579 [DEBUG] response_closed.started
+2026-07-30 22:05:45,579 [DEBUG] response_closed.complete
+2026-07-30 22:05:45,579 [DEBUG] Fetching historical candles: {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:05:45.579593', 'to': '2026-07-30T20:05:45.579601'}
+2026-07-30 22:05:45,579 [DEBUG] Sending client message: jsonrpc='2.0' id=12 method='tools/call' params={'name': 'get_trendbars', 'arguments': {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:05:45.579593', 'to': '2026-07-30T20:05:45.579601'}, '_meta': {}}
+2026-07-30 22:05:45,580 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:45,580 [DEBUG] send_request_headers.complete
+2026-07-30 22:05:45,580 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:05:45,580 [DEBUG] send_request_body.complete
+2026-07-30 22:05:45,580 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,728 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:05:46 GMT'), (b'Content-Length', b'87840')])
+2026-07-30 22:05:46,729 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:05:46,729 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,729 [DEBUG] receive_response_body.complete
+2026-07-30 22:05:46,729 [DEBUG] response_closed.started
+2026-07-30 22:05:46,729 [DEBUG] response_closed.complete
+2026-07-30 22:05:46,730 [INFO] Received 500 candle(s) for US500 (timeframe=m5)
+2026-07-30 22:05:46,732 [WARNING] No ML model loaded — returning neutral default
+2026-07-30 22:05:46,732 [INFO] ML signal: bias=neutral confidence=0.00
+2026-07-30 22:05:46,732 [INFO] ML trading signal: NEUTRAL
+2026-07-30 22:05:46,732 [INFO] === Step 4: Feedback Loop ===
+2026-07-30 22:05:46,733 [DEBUG] Sending client message: jsonrpc='2.0' id=13 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:05:46,733 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,733 [DEBUG] send_request_headers.complete
+2026-07-30 22:05:46,733 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,733 [DEBUG] send_request_body.complete
+2026-07-30 22:05:46,734 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,734 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:05:46 GMT'), (b'Content-Length', b'2202')])
+2026-07-30 22:05:46,734 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:05:46,734 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,734 [DEBUG] receive_response_body.complete
+2026-07-30 22:05:46,735 [DEBUG] response_closed.started
+2026-07-30 22:05:46,735 [DEBUG] response_closed.complete
+2026-07-30 22:05:46,738 [DEBUG] Sending client message: jsonrpc='2.0' id=14 method='tools/call' params={'name': 'get_positions', 'arguments': {}, '_meta': {}}
+2026-07-30 22:05:46,738 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,738 [DEBUG] send_request_headers.complete
+2026-07-30 22:05:46,738 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,739 [DEBUG] send_request_body.complete
+2026-07-30 22:05:46,739 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,739 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:05:46 GMT'), (b'Content-Length', b'100')])
+2026-07-30 22:05:46,740 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:05:46,740 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,740 [DEBUG] receive_response_body.complete
+2026-07-30 22:05:46,740 [DEBUG] response_closed.started
+2026-07-30 22:05:46,740 [DEBUG] response_closed.complete
+2026-07-30 22:05:46,741 [DEBUG] Sending client message: jsonrpc='2.0' id=15 method='tools/call' params={'name': 'get_pending_orders', 'arguments': {}, '_meta': {}}
+2026-07-30 22:05:46,741 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,741 [DEBUG] send_request_headers.complete
+2026-07-30 22:05:46,741 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,741 [DEBUG] send_request_body.complete
+2026-07-30 22:05:46,741 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,742 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:05:46 GMT'), (b'Content-Length', b'97')])
+2026-07-30 22:05:46,742 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:05:46,742 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,742 [DEBUG] receive_response_body.complete
+2026-07-30 22:05:46,742 [DEBUG] response_closed.started
+2026-07-30 22:05:46,742 [DEBUG] response_closed.complete
+2026-07-30 22:05:46,742 [DEBUG] Sending client message: jsonrpc='2.0' id=16 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:05:46,742 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,743 [DEBUG] send_request_headers.complete
+2026-07-30 22:05:46,743 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,743 [DEBUG] send_request_body.complete
+2026-07-30 22:05:46,743 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,743 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:05:46 GMT'), (b'Content-Length', b'2202')])
+2026-07-30 22:05:46,743 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:05:46,743 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,743 [DEBUG] receive_response_body.complete
+2026-07-30 22:05:46,743 [DEBUG] response_closed.started
+2026-07-30 22:05:46,743 [DEBUG] response_closed.complete
+2026-07-30 22:05:46,743 [DEBUG] Sending client message: jsonrpc='2.0' id=17 method='tools/call' params={'name': 'get_order_history', 'arguments': {}, '_meta': {}}
+2026-07-30 22:05:46,744 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,744 [DEBUG] send_request_headers.complete
+2026-07-30 22:05:46,744 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,744 [DEBUG] send_request_body.complete
+2026-07-30 22:05:46,744 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:05:46,744 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:05:46 GMT'), (b'Content-Length', b'2119')])
+2026-07-30 22:05:46,744 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:05:46,744 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:05:46,744 [DEBUG] receive_response_body.complete
+2026-07-30 22:05:46,744 [DEBUG] response_closed.started
+2026-07-30 22:05:46,744 [DEBUG] response_closed.complete
+2026-07-30 22:06:46,745 [DEBUG] --- Live Monitoring iteration 3 ---
+2026-07-30 22:06:46,751 [DEBUG] Sending client message: jsonrpc='2.0' id=18 method='tools/call' params={'name': 'get_spot_prices', 'arguments': {'symbolName': 'US500'}, '_meta': {}}
+2026-07-30 22:06:46,752 [DEBUG] close.started
+2026-07-30 22:06:46,753 [DEBUG] close.complete
+2026-07-30 22:06:46,753 [DEBUG] connect_tcp.started host='127.0.0.1' port=9876 local_address=None timeout=30.0 socket_options=None
+2026-07-30 22:06:46,754 [DEBUG] connect_tcp.complete return_value=<httpcore2._backends.anyio.AnyIOStream object at 0x113da7730>
+2026-07-30 22:06:46,754 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:46,754 [DEBUG] send_request_headers.complete
+2026-07-30 22:06:46,754 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:06:46,755 [DEBUG] send_request_body.complete
+2026-07-30 22:06:46,755 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:46,755 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:06:46 GMT'), (b'Content-Length', b'254')])
+2026-07-30 22:06:46,756 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:06:46,756 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:06:46,756 [DEBUG] receive_response_body.complete
+2026-07-30 22:06:46,756 [DEBUG] response_closed.started
+2026-07-30 22:06:46,756 [DEBUG] response_closed.complete
+2026-07-30 22:06:46,757 [DEBUG] Fetching historical candles: {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:06:46.757732', 'to': '2026-07-30T20:06:46.757745'}
+2026-07-30 22:06:46,758 [DEBUG] Sending client message: jsonrpc='2.0' id=19 method='tools/call' params={'name': 'get_trendbars', 'arguments': {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:06:46.757732', 'to': '2026-07-30T20:06:46.757745'}, '_meta': {}}
+2026-07-30 22:06:46,760 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:46,760 [DEBUG] send_request_headers.complete
+2026-07-30 22:06:46,760 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:06:46,760 [DEBUG] send_request_body.complete
+2026-07-30 22:06:46,760 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,826 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:06:47 GMT'), (b'Content-Length', b'87840')])
+2026-07-30 22:06:47,827 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:06:47,827 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,827 [DEBUG] receive_response_body.complete
+2026-07-30 22:06:47,827 [DEBUG] response_closed.started
+2026-07-30 22:06:47,827 [DEBUG] response_closed.complete
+2026-07-30 22:06:47,828 [INFO] Received 500 candle(s) for US500 (timeframe=m5)
+2026-07-30 22:06:47,829 [WARNING] No ML model loaded — returning neutral default
+2026-07-30 22:06:47,829 [INFO] ML signal: bias=neutral confidence=0.00
+2026-07-30 22:06:47,829 [INFO] ML trading signal: NEUTRAL
+2026-07-30 22:06:47,829 [INFO] === Step 4: Feedback Loop ===
+2026-07-30 22:06:47,829 [DEBUG] Sending client message: jsonrpc='2.0' id=20 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:06:47,830 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,830 [DEBUG] send_request_headers.complete
+2026-07-30 22:06:47,830 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,830 [DEBUG] send_request_body.complete
+2026-07-30 22:06:47,830 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,830 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:06:47 GMT'), (b'Content-Length', b'2202')])
+2026-07-30 22:06:47,830 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:06:47,830 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,830 [DEBUG] receive_response_body.complete
+2026-07-30 22:06:47,831 [DEBUG] response_closed.started
+2026-07-30 22:06:47,831 [DEBUG] response_closed.complete
+2026-07-30 22:06:47,831 [DEBUG] Sending client message: jsonrpc='2.0' id=21 method='tools/call' params={'name': 'get_positions', 'arguments': {}, '_meta': {}}
+2026-07-30 22:06:47,832 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,832 [DEBUG] send_request_headers.complete
+2026-07-30 22:06:47,832 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,832 [DEBUG] send_request_body.complete
+2026-07-30 22:06:47,832 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,833 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:06:47 GMT'), (b'Content-Length', b'100')])
+2026-07-30 22:06:47,833 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:06:47,833 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,833 [DEBUG] receive_response_body.complete
+2026-07-30 22:06:47,834 [DEBUG] response_closed.started
+2026-07-30 22:06:47,834 [DEBUG] response_closed.complete
+2026-07-30 22:06:47,834 [DEBUG] Sending client message: jsonrpc='2.0' id=22 method='tools/call' params={'name': 'get_pending_orders', 'arguments': {}, '_meta': {}}
+2026-07-30 22:06:47,835 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,835 [DEBUG] send_request_headers.complete
+2026-07-30 22:06:47,835 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,835 [DEBUG] send_request_body.complete
+2026-07-30 22:06:47,835 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,835 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:06:47 GMT'), (b'Content-Length', b'97')])
+2026-07-30 22:06:47,835 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:06:47,835 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,835 [DEBUG] receive_response_body.complete
+2026-07-30 22:06:47,835 [DEBUG] response_closed.started
+2026-07-30 22:06:47,835 [DEBUG] response_closed.complete
+2026-07-30 22:06:47,836 [DEBUG] Sending client message: jsonrpc='2.0' id=23 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:06:47,836 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,836 [DEBUG] send_request_headers.complete
+2026-07-30 22:06:47,836 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,836 [DEBUG] send_request_body.complete
+2026-07-30 22:06:47,836 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,836 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:06:47 GMT'), (b'Content-Length', b'2202')])
+2026-07-30 22:06:47,837 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:06:47,837 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,837 [DEBUG] receive_response_body.complete
+2026-07-30 22:06:47,837 [DEBUG] response_closed.started
+2026-07-30 22:06:47,837 [DEBUG] response_closed.complete
+2026-07-30 22:06:47,837 [DEBUG] Sending client message: jsonrpc='2.0' id=24 method='tools/call' params={'name': 'get_order_history', 'arguments': {}, '_meta': {}}
+2026-07-30 22:06:47,837 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,837 [DEBUG] send_request_headers.complete
+2026-07-30 22:06:47,837 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,838 [DEBUG] send_request_body.complete
+2026-07-30 22:06:47,838 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:06:47,838 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:06:47 GMT'), (b'Content-Length', b'2119')])
+2026-07-30 22:06:47,838 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:06:47,838 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:06:47,838 [DEBUG] receive_response_body.complete
+2026-07-30 22:06:47,838 [DEBUG] response_closed.started
+2026-07-30 22:06:47,838 [DEBUG] response_closed.complete
+2026-07-30 22:07:47,839 [DEBUG] --- Live Monitoring iteration 4 ---
+2026-07-30 22:07:47,845 [DEBUG] Sending client message: jsonrpc='2.0' id=25 method='tools/call' params={'name': 'get_spot_prices', 'arguments': {'symbolName': 'US500'}, '_meta': {}}
+2026-07-30 22:07:47,846 [DEBUG] close.started
+2026-07-30 22:07:47,847 [DEBUG] close.complete
+2026-07-30 22:07:47,847 [DEBUG] connect_tcp.started host='127.0.0.1' port=9876 local_address=None timeout=30.0 socket_options=None
+2026-07-30 22:07:47,848 [DEBUG] connect_tcp.complete return_value=<httpcore2._backends.anyio.AnyIOStream object at 0x113da6650>
+2026-07-30 22:07:47,848 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:47,848 [DEBUG] send_request_headers.complete
+2026-07-30 22:07:47,848 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:07:47,849 [DEBUG] send_request_body.complete
+2026-07-30 22:07:47,849 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:47,849 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:07:47 GMT'), (b'Content-Length', b'256')])
+2026-07-30 22:07:47,850 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:07:47,850 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:07:47,850 [DEBUG] receive_response_body.complete
+2026-07-30 22:07:47,850 [DEBUG] response_closed.started
+2026-07-30 22:07:47,850 [DEBUG] response_closed.complete
+2026-07-30 22:07:47,851 [DEBUG] Fetching historical candles: {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:07:47.851438', 'to': '2026-07-30T20:07:47.851448'}
+2026-07-30 22:07:47,851 [DEBUG] Sending client message: jsonrpc='2.0' id=26 method='tools/call' params={'name': 'get_trendbars', 'arguments': {'symbolName': 'US500', 'timeframe': 'm5', 'from': '2026-01-31T20:07:47.851438', 'to': '2026-07-30T20:07:47.851448'}, '_meta': {}}
+2026-07-30 22:07:47,852 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:47,853 [DEBUG] send_request_headers.complete
+2026-07-30 22:07:47,853 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:07:47,853 [DEBUG] send_request_body.complete
+2026-07-30 22:07:47,853 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,017 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:07:49 GMT'), (b'Content-Length', b'87840')])
+2026-07-30 22:07:49,017 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:07:49,017 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,018 [DEBUG] receive_response_body.complete
+2026-07-30 22:07:49,018 [DEBUG] response_closed.started
+2026-07-30 22:07:49,018 [DEBUG] response_closed.complete
+2026-07-30 22:07:49,019 [INFO] Received 500 candle(s) for US500 (timeframe=m5)
+2026-07-30 22:07:49,021 [WARNING] No ML model loaded — returning neutral default
+2026-07-30 22:07:49,021 [INFO] ML signal: bias=neutral confidence=0.00
+2026-07-30 22:07:49,021 [INFO] ML trading signal: NEUTRAL
+2026-07-30 22:07:49,021 [INFO] === Step 4: Feedback Loop ===
+2026-07-30 22:07:49,022 [DEBUG] Sending client message: jsonrpc='2.0' id=27 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:07:49,022 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,022 [DEBUG] send_request_headers.complete
+2026-07-30 22:07:49,022 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,022 [DEBUG] send_request_body.complete
+2026-07-30 22:07:49,023 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,023 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:07:49 GMT'), (b'Content-Length', b'2202')])
+2026-07-30 22:07:49,023 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:07:49,023 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,023 [DEBUG] receive_response_body.complete
+2026-07-30 22:07:49,023 [DEBUG] response_closed.started
+2026-07-30 22:07:49,023 [DEBUG] response_closed.complete
+2026-07-30 22:07:49,027 [DEBUG] Sending client message: jsonrpc='2.0' id=28 method='tools/call' params={'name': 'get_positions', 'arguments': {}, '_meta': {}}
+2026-07-30 22:07:49,028 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,028 [DEBUG] send_request_headers.complete
+2026-07-30 22:07:49,028 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,028 [DEBUG] send_request_body.complete
+2026-07-30 22:07:49,028 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,028 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:07:49 GMT'), (b'Content-Length', b'100')])
+2026-07-30 22:07:49,028 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:07:49,028 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,028 [DEBUG] receive_response_body.complete
+2026-07-30 22:07:49,028 [DEBUG] response_closed.started
+2026-07-30 22:07:49,029 [DEBUG] response_closed.complete
+2026-07-30 22:07:49,029 [DEBUG] Sending client message: jsonrpc='2.0' id=29 method='tools/call' params={'name': 'get_pending_orders', 'arguments': {}, '_meta': {}}
+2026-07-30 22:07:49,029 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,029 [DEBUG] send_request_headers.complete
+2026-07-30 22:07:49,029 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,030 [DEBUG] send_request_body.complete
+2026-07-30 22:07:49,030 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,030 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:07:49 GMT'), (b'Content-Length', b'97')])
+2026-07-30 22:07:49,030 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:07:49,030 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,030 [DEBUG] receive_response_body.complete
+2026-07-30 22:07:49,030 [DEBUG] response_closed.started
+2026-07-30 22:07:49,030 [DEBUG] response_closed.complete
+2026-07-30 22:07:49,030 [DEBUG] Sending client message: jsonrpc='2.0' id=30 method='tools/call' params={'name': 'get_deals', 'arguments': {}, '_meta': {}}
+2026-07-30 22:07:49,031 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,031 [DEBUG] send_request_headers.complete
+2026-07-30 22:07:49,031 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,031 [DEBUG] send_request_body.complete
+2026-07-30 22:07:49,031 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,031 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:07:49 GMT'), (b'Content-Length', b'2202')])
+2026-07-30 22:07:49,031 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:07:49,031 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,031 [DEBUG] receive_response_body.complete
+2026-07-30 22:07:49,032 [DEBUG] response_closed.started
+2026-07-30 22:07:49,032 [DEBUG] response_closed.complete
+2026-07-30 22:07:49,032 [DEBUG] Sending client message: jsonrpc='2.0' id=31 method='tools/call' params={'name': 'get_order_history', 'arguments': {}, '_meta': {}}
+2026-07-30 22:07:49,032 [DEBUG] send_request_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,032 [DEBUG] send_request_headers.complete
+2026-07-30 22:07:49,032 [DEBUG] send_request_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,032 [DEBUG] send_request_body.complete
+2026-07-30 22:07:49,032 [DEBUG] receive_response_headers.started request=<Request [b'POST']>
+2026-07-30 22:07:49,033 [DEBUG] receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Cache-Control', b'no-store'), (b'Server', b'Microsoft-NetCore/2.0'), (b'Date', b'Thu, 30 Jul 2026 20:07:49 GMT'), (b'Content-Length', b'2119')])
+2026-07-30 22:07:49,033 [INFO] HTTP Request: POST http://127.0.0.1:9876/mcp "HTTP/1.1 200 OK"
+2026-07-30 22:07:49,033 [DEBUG] receive_response_body.started request=<Request [b'POST']>
+2026-07-30 22:07:49,033 [DEBUG] receive_response_body.complete
+2026-07-30 22:07:49,033 [DEBUG] response_closed.started
+2026-07-30 22:07:49,033 [DEBUG] response_closed.complete
+2026-07-30 22:08:02,443 [DEBUG] receive_response_body.failed exception=CancelledError()
+2026-07-30 22:08:02,444 [DEBUG] response_closed.started
+2026-07-30 22:08:02,445 [DEBUG] response_closed.complete
+2026-07-30 22:08:02,445 [DEBUG] close.started
+2026-07-30 22:08:02,446 [DEBUG] close.complete

@@ -24,6 +24,7 @@ log = logging.getLogger("ai_trader.ai_model")
 MODEL_PATH = "trading_model.joblib"
 SCALER_PATH = "trading_scaler.joblib"
 TRADES_HISTORY_PATH = "trade_history.json"
+EVENTS_LOG_FILE = "events.json"
 
 
 class TradeEvent:

@@ -39,3 +39,7 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Temporary test files
+test_ollama.py
+trader_test_output.log
