@@ -1,10 +1,10 @@
 [
   {
-    "serial": 1,
+    "serial": 0,
     "orderId": null,
     "positionId": 69217533,
     "event": "Create Position",
-    "time": "2026-07-30T02:44:17.989Z",
+    "time": 1785379457989,
     "volume": 0,
     "quantity": 0,
     "type": "Sell",
@@ -18,11 +18,11 @@
     "equity": null
   },
   {
-    "serial": 2,
+    "serial": 1,
     "orderId": null,
     "positionId": 69299679,
     "event": "Create Position",
-    "time": "2026-07-30T08:02:26.071Z",
+    "time": 1785398546071,
     "volume": 0,
     "quantity": 0,
     "type": "Sell",
@@ -36,11 +36,11 @@
     "equity": null
   },
   {
-    "serial": 3,
+    "serial": 2,
     "orderId": null,
     "positionId": 69328103,
     "event": "Create Position",
-    "time": "2026-07-30T10:35:35.075Z",
+    "time": 1785407735075,
     "volume": 0,
     "quantity": 0,
     "type": "Buy",
@@ -50,6 +50,24 @@
     "closePrice": null,
     "grossProfit": 0.16,
     "pips": 0.3,
+    "balance": null,
+    "equity": null
+  },
+  {
+    "serial": 3,
+    "orderId": null,
+    "positionId": 69414157,
+    "event": "Create Position",
+    "time": 1785428607033,
+    "volume": 0,
+    "quantity": 0,
+    "type": "Buy",
+    "entryPrice": 7405.3,
+    "tp": null,
+    "sl": null,
+    "closePrice": null,
+    "grossProfit": 1.9,
+    "pips": 3.6,
     "balance": null,
     "equity": null
   }

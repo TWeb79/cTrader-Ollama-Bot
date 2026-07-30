@@ -66,7 +66,7 @@ CONFIG = {
     "mcp_url": "http://127.0.0.1:9876/mcp",
 
     # --- Ollama ---
-    "ollama_model": "qwen3.5:9b",
+    "ollama_model": "qwen2.5-coder:7b", #"qwen3.5:9b",
     "ollama_host": "http://localhost:11434",
 
     # --- Strategy selection ---
@@ -113,10 +113,18 @@ CONFIG = {
     "ollama_intraday_hours": 4,             # hours of intraday candles to include in live signal prompt
 
     # --- Risk management ---
-    "trade_volume": 0.1,                   # lots — size this deliberately
+    "trade_volume": 0.1,                   # lots — fallback if risk-based sizing is disabled
     "stop_loss_points": 15.0,              # instrument points (not pips) — tune for US500's volatility
     "take_profit_points": 30.0,
     "max_open_positions": 1,
+    "trade_risk_pct": 2.0,                 # risk percentage per trade for position sizing
+    "trade_balance": 10000.0,              # account balance for position sizing
+    "trade_pip_value_per_unit": 1.0,       # value of one pip per unit
+    "trade_max_volume_lots": 10.0,         # hard ceiling on position size
+    "trade_min_volume": 0.1,               # minimum trade volume
+    "trade_volume_step": 0.1,              # rounding step for volume
+    "trade_volume_min_units": 0.01,        # broker minimum volume units
+    "trade_volume_max_units": 100.0,       # broker maximum volume units
 
     # --- Safety switch ---
     "dry_run": True,                       # True = never sends real orders, only logs intended trades
@@ -422,23 +430,127 @@ async def ask_ollama_for_position_management(
     return "HOLD"
 
 
+def ask_ollama_for_sl_tp_recommendation(
+    model: str, symbol: str, current_price: float, position: dict,
+    strategy: dict, intraday_candles: list[dict] = None,
+) -> dict:
+    """Ask the model for recommended stop-loss and take-profit levels.
+    Returns dict with stop_loss, take_profit, and reasoning, or None on failure."""
+    system_prompt = (
+        "You are a risk management assistant for trading. "
+        "Given a new position and current market conditions, recommend optimal "
+        "stop-loss and take-profit absolute price levels. "
+        "Respond ONLY with valid JSON, no prose, no markdown fences, matching this schema:\n"
+        '{"stop_loss": 5800.50, "take_profit": 5900.25, "reasoning": "short string"}'
+    )
+    intraday_summary = ""
+    if intraday_candles:
+        intraday_summary = f"\nRecent intraday candles:\n{format_intraday_summary(intraday_candles)}"
+
+    pos_side = position.get("type", position.get("side", "Buy"))
+    entry_price = position.get("entryPrice", position.get("openPrice", current_price))
+    volume = position.get("volume", position.get("currentVolume", 0))
+
+    user_prompt = (
+        f"Symbol: {symbol}\n"
+        f"Position: {pos_side} {volume} lots @ {entry_price}\n"
+        f"Strategy: {json.dumps(strategy)}\n"
+        f"Current price: {current_price}\n"
+        f"{intraday_summary}"
+        "Recommend stop-loss and take-profit absolute price levels:"
+    )
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
+    ]
+    log.debug("Ollama SL/TP recommendation request → model=%s, messages=%s, options={temperature=0.1}", model, json.dumps(messages, indent=2))
+    try:
+        response = ollama.chat(
+            model=model,
+            messages=messages,
+            options={"temperature": 0.1},
+        )
+    except Exception:
+        log.exception("Ollama SL/TP recommendation request failed")
+        return None
+    log.debug("Ollama SL/TP recommendation response ← raw=%s", repr(response))
+    content = response["message"]["content"].strip()
+    log.debug("Ollama SL/TP recommendation response ← content=%s", content)
+    content = content.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    try:
+        result = json.loads(content)
+        sl = result.get("stop_loss")
+        tp = result.get("take_profit")
+        reasoning = result.get("reasoning", "")
+        if sl is None or tp is None:
+            log.warning("Ollama SL/TP recommendation missing stop_loss or take_profit: %s", result)
+            return None
+        log.info("Ollama SL/TP recommendation: SL=%.2f, TP=%.2f, reasoning=%s", sl, tp, reasoning)
+        return {"stop_loss": float(sl), "take_profit": float(tp), "reasoning": reasoning}
+    except (json.JSONDecodeError, ValueError, TypeError) as e:
+        log.warning("Model did not return valid JSON for SL/TP, got:\n%s\nError: %s", content, e)
+        return None
+
+
+async def _apply_ollama_sl_tp_once(
+    client: CTraderMCPClient, config: dict, position_id: str,
+    current_price: float, strategy: dict, intraday_candles: list[dict],
+    processed_set: set,
+):
+    """Fetch position details and apply one-time Ollama SL/TP recommendation."""
+    if position_id in processed_set:
+        return
+    updated_positions = await client.call(TOOL_NAMES["list_positions"], {})
+    if not isinstance(updated_positions, list):
+        updated_positions = updated_positions.get("positions", updated_positions.get("items", [])) if isinstance(updated_positions, dict) else []
+
+    new_position = None
+    for pos in updated_positions:
+        if str(pos.get("id", pos.get("positionId", ""))) == str(position_id):
+            new_position = pos
+            break
+
+    if not new_position:
+        log.warning("Could not find newly placed position %s for Ollama SL/TP recommendation", position_id)
+        processed_set.add(position_id)
+        return
+
+    sl_tp = ask_ollama_for_sl_tp_recommendation(
+        config["ollama_model"], config["symbol"], current_price,
+        new_position, strategy, intraday_candles,
+    )
+    if sl_tp:
+        if config["dry_run"]:
+            log.info("[DRY RUN] Would amend position %s with SL=%.2f, TP=%.2f", position_id, sl_tp["stop_loss"], sl_tp["take_profit"])
+        else:
+            await client.call(TOOL_NAMES["amend_position"], {
+                "Id": position_id,
+                "stopLoss": round(sl_tp["stop_loss"], 2),
+                "takeProfit": round(sl_tp["take_profit"], 2),
+            })
+            log.info("Amended position %s with Ollama SL/TP: SL=%.2f, TP=%.2f", position_id, sl_tp["stop_loss"], sl_tp["take_profit"])
+    processed_set.add(position_id)
+
+
 # ============================================================
 # TRADE EXECUTION
 # ============================================================
 
 async def place_trade(client: CTraderMCPClient, side: str, config: dict):
-    # For simplicity, assume 1 point = 1 pip (common for indices like US500)
-    # In production, you might want to get pip size from symbol details
     sl_pips = config["stop_loss_points"]
-    tp_pips = config["take_profit_points"]
+    volume = _calculate_trade_volume(sl_pips, config)
+
+    if volume <= 0:
+        log.warning("Calculated trade volume is %.2f — skipping trade", volume)
+        return None
 
     order_args = {
         "symbolName": config["symbol"],
         "side": "buy" if side == "BUY" else "sell",
-        "volume": config["trade_volume"],
+        "volume": volume,
         "volumeType": "lots",
         "stopLossPips": round(sl_pips, 2),
-        "takeProfitPips": round(tp_pips, 2),
+        "takeProfitPips": round(config["take_profit_points"], 2),
     }
 
     log.debug("Preparing order with args: %s", order_args)
@@ -450,14 +562,41 @@ async def place_trade(client: CTraderMCPClient, side: str, config: dict):
     log.warning("Placing LIVE order: %s", order_args)
     result = await client.call(TOOL_NAMES["place_order"], order_args)
     log.info("Order result: %s", result)
+
+    # Cache the volume by position ID so event logging can use it if MCP returns 0
+    if isinstance(result, dict):
+        position_id = result.get("id")
+        if position_id is not None:
+            _trade_volumes[str(position_id)] = volume
+
     return result
 
 
 EVENTS_LOG_FILE = "events.json"
 
+# Cache for trade volumes sent to the MCP server, keyed by position ID.
+# Used to populate volume in events.json when the MCP returns 0 or missing volume.
+_trade_volumes: dict = {}
+
 
 def _ms_timestamp() -> int:
     return int(datetime.utcnow().timestamp() * 1000)
+
+
+def _calculate_trade_volume(sl_pips: float, config: dict) -> float:
+    """Calculate position size based on risk percentage and account balance."""
+    volume = calculate_position_size(
+        sl_pips=sl_pips,
+        risk_pct=config.get("trade_risk_pct", config.get("vp_base_risk_pct", 2.0)),
+        balance=config.get("trade_balance", config.get("vp_balance", 10000.0)),
+        pip_value_per_unit=config.get("trade_pip_value_per_unit", config.get("vp_pip_value_per_unit", 1.0)),
+        max_volume_lots=config.get("trade_max_volume_lots", config.get("vp_max_volume_lots", 10.0)),
+        min_trade_volume=config.get("trade_min_volume", config.get("vp_min_trade_volume", 0.1)),
+        volume_step=config.get("trade_volume_step", config.get("vp_volume_step", 0.1)),
+        volume_min_units=config.get("trade_volume_min_units", config.get("vp_volume_min_units", 0.01)),
+        volume_max_units=config.get("trade_volume_max_units", config.get("vp_volume_max_units", 100.0)),
+    )
+    return volume
 
 
 def _last_serial() -> int:
@@ -469,7 +608,21 @@ def _last_serial() -> int:
                 return max(e.get("serial", 0) for e in events)
         except (json.JSONDecodeError, ValueError, TypeError):
             pass
-    return 0
+    return -1
+
+
+def _coerce_int_time(val: Any, fallback: int) -> int:
+    """Ensure a timestamp value is an integer (milliseconds)."""
+    if isinstance(val, int):
+        return val
+    if isinstance(val, str):
+        try:
+            from datetime import datetime
+            dt = datetime.fromisoformat(val.replace("Z", "+00:00"))
+            return int(dt.timestamp() * 1000)
+        except (ValueError, TypeError):
+            return fallback
+    return fallback
 
 
 def _position_to_event(position: dict, serial: int, event_type: str = "Create Position") -> dict:
@@ -478,14 +631,20 @@ def _position_to_event(position: dict, serial: int, event_type: str = "Create Po
         pos_type = pos_type.capitalize()
     if pos_type not in ("Buy", "Sell"):
         pos_type = "Buy"
+
+    pos_id = str(position.get("id", position.get("positionId", 0)))
+    cached_volume = _trade_volumes.get(pos_id)
+    raw_volume = position.get("volume", position.get("currentVolume", cached_volume if cached_volume is not None else 0))
+    volume = raw_volume if raw_volume is not None else (cached_volume if cached_volume is not None else 0)
+
     return {
         "serial": serial,
         "orderId": None,
-        "positionId": position.get("id", position.get("positionId", 0)),
+        "positionId": pos_id,
         "event": event_type,
         "time": _ms_timestamp(),
-        "volume": position.get("volume", position.get("currentVolume", 0)),
-        "quantity": position.get("volume", position.get("currentVolume", 0)),
+        "volume": volume,
+        "quantity": volume,
         "type": pos_type,
         "entryPrice": position.get("entryPrice", position.get("openPrice", 0)),
         "tp": position.get("takeProfit", position.get("tp", None)),
@@ -544,15 +703,24 @@ async def log_trades(client: CTraderMCPClient, config: dict):
     for pos in positions:
         pos_id = pos.get("id", pos.get("positionId", 0))
         # Check if this position already exists in our events
-        existing_ids = {e.get("positionId") for e in existing_events}
-        if pos_id not in existing_ids:
+        existing_create_ids = {
+            str(e.get("positionId"))
+            for e in existing_events
+            if e.get("event") == "Create Position"
+        }
+        if str(pos_id) not in existing_create_ids:
             # New position — CREATE event
             new_events.append(_position_to_event(pos, next_serial, "Create Position"))
             next_serial += 1
         else:
             # Existing position — check if SL/TP was modified
             existing_pos_event = next(
-                (e for e in reversed(existing_events) if e.get("positionId") == pos_id and e.get("event") == "Create Position"),
+                (
+                    e
+                    for e in reversed(existing_events)
+                    if str(e.get("positionId")) == str(pos_id)
+                    and e.get("event") == "Create Position"
+                ),
                 None,
             )
             if existing_pos_event is not None:
@@ -565,7 +733,8 @@ async def log_trades(client: CTraderMCPClient, config: dict):
     # Build events for pending orders (treat as position creates)
     for order in pending:
         order_id = order.get("id", order.get("orderId", 0))
-        if order_id not in {e.get("positionId") for e in existing_events}:
+        existing_pending_ids = {str(e.get("positionId")) for e in existing_events}
+        if str(order_id) not in existing_pending_ids:
             new_events.append(_position_to_event(order, next_serial, "Create Position"))
             next_serial += 1
 
@@ -585,20 +754,18 @@ async def log_trades(client: CTraderMCPClient, config: dict):
 
     for deal in deals:
         deal_id = deal.get("id", deal.get("dealId", 0))
-        if deal_id not in {e.get("serial") for e in existing_events}:
+        if str(deal_id) not in {str(e.get("serial")) for e in existing_events}:
             # Determine event type based on deal data
             close_price = deal.get("closePrice", deal.get("closePrice", None))
             profit = deal.get("profit", deal.get("grossProfit", 0))
             pips = deal.get("pips", 0)
 
-            if close_price is not None and profit < 0:
-                event_type = "Stop Loss Hit"
-            elif close_price is not None and profit >= 0:
-                event_type = "Take Profit"
-            elif close_price is not None:
-                event_type = "Position closed"
-            else:
+            if close_price is None:
                 event_type = "Create Position"
+            elif profit < 0:
+                event_type = "Stop Loss Hit"
+            else:
+                event_type = "Position closed"
 
             pos_type = deal.get("type", deal.get("side", "Buy"))
             if isinstance(pos_type, str):
@@ -614,7 +781,7 @@ async def log_trades(client: CTraderMCPClient, config: dict):
                 "orderId": None,
                 "positionId": pos_id,
                 "event": event_type,
-                "time": deal.get("time", deal.get("closeTime", now_ms)),
+                "time": _coerce_int_time(deal.get("time", deal.get("closeTime", now_ms)), now_ms),
                 "volume": deal.get("volume", deal.get("quantity", 0)),
                 "quantity": deal.get("volume", deal.get("quantity", 0)),
                 "type": pos_type,
@@ -646,19 +813,17 @@ async def log_trades(client: CTraderMCPClient, config: dict):
 
     for h_item in history:
         h_id = h_item.get("id", h_item.get("orderId", 0))
-        if h_id not in {e.get("serial") for e in existing_events}:
+        if str(h_id) not in {str(e.get("serial")) for e in existing_events}:
             close_price = h_item.get("closePrice", h_item.get("closePrice", None))
             profit = h_item.get("profit", h_item.get("grossProfit", 0))
             pips = h_item.get("pips", 0)
 
-            if close_price is not None and profit < 0:
-                event_type = "Stop Loss Hit"
-            elif close_price is not None and profit >= 0:
-                event_type = "Take Profit"
-            elif close_price is not None:
-                event_type = "Position closed"
-            else:
+            if close_price is None:
                 event_type = "Create Position"
+            elif profit < 0:
+                event_type = "Stop Loss Hit"
+            else:
+                event_type = "Position closed"
 
             pos_type = h_item.get("type", h_item.get("side", "Buy"))
             if isinstance(pos_type, str):
@@ -673,7 +838,7 @@ async def log_trades(client: CTraderMCPClient, config: dict):
                 "orderId": None,
                 "positionId": pos_id,
                 "event": event_type,
-                "time": h_item.get("time", h_item.get("closeTime", now_ms)),
+                "time": _coerce_int_time(h_item.get("time", h_item.get("closeTime", now_ms)), now_ms),
                 "volume": h_item.get("volume", h_item.get("quantity", 0)),
                 "quantity": h_item.get("volume", h_item.get("quantity", 0)),
                 "type": pos_type,
@@ -767,6 +932,7 @@ async def run_volume_profile_strategy(client: CTraderMCPClient, config: dict, ca
     # --- Step 2: live monitoring loop ---
     iterations = 0
     active_position_id: Optional[str] = None
+    ollama_sl_tp_processed = set()
 
     while True:
         log.debug("--- Volume Profile Polling iteration %d ---", iterations + 1)
@@ -805,7 +971,7 @@ async def run_volume_profile_strategy(client: CTraderMCPClient, config: dict, ca
 
             intraday_candles = await fetch_intraday_candles(client, config)
 
-            mgmt_signal = ask_ollama_for_position_management(
+            mgmt_signal = await ask_ollama_for_position_management(
                 config["ollama_model"], {}, config["symbol"], price_pos,
                 positions, pending_orders, intraday_candles,
             )
@@ -899,12 +1065,23 @@ async def run_volume_profile_strategy(client: CTraderMCPClient, config: dict, ca
                             ),
                         }, indent=2))
                     else:
-                        log.warning("Placing LIVE volume profile order: %s %s @ %.2f, SL=%.2f, TP=%.2f",
-                                    result.direction, config["symbol"], result.entry, result.sl, result.targets[0])
+                        volume = calculate_position_size(
+                            sl_pips=result.risk_pips,
+                            risk_pct=vp_config["base_risk_pct"],
+                            balance=vp_config["balance"],
+                            pip_value_per_unit=vp_config["pip_value_per_unit"],
+                            max_volume_lots=vp_config["max_volume_lots"],
+                            min_trade_volume=vp_config["min_trade_volume"],
+                            volume_step=vp_config["volume_step"],
+                            volume_min_units=vp_config["volume_min_units"],
+                            volume_max_units=vp_config["volume_max_units"],
+                        )
+                        log.warning("Placing LIVE volume profile order: %s %s @ %.2f, SL=%.2f, TP=%.2f, Volume=%.2f",
+                                    result.direction, config["symbol"], result.entry, result.sl, result.targets[0], volume)
                         order_args = {
                             "symbolName": config["symbol"],
                             "side": "buy" if result.direction == "BUY" else "sell",
-                            "volume": config["trade_volume"],
+                            "volume": volume,
                             "volumeType": "lots",
                             "stopLossPips": round(result.risk_pips, 2),
                             "takeProfitPips": round(result.tp1_pips, 2),
@@ -912,6 +1089,13 @@ async def run_volume_profile_strategy(client: CTraderMCPClient, config: dict, ca
                         trade_result = await client.call(TOOL_NAMES["place_order"], order_args)
                         log.info("Volume profile order result: %s", trade_result)
                         active_position_id = str(trade_result.get("id", "unknown"))
+                        if active_position_id != "unknown":
+                            _trade_volumes[active_position_id] = volume
+                        intraday_candles_vp = await fetch_intraday_candles(client, config)
+                        await _apply_ollama_sl_tp_once(
+                            client, config, active_position_id, ctx.price,
+                            {}, intraday_candles_vp, ollama_sl_tp_processed,
+                        )
                 elif result is None and active_position_id is None:
                     # Try magnet mode as fallback
                     log.debug("Schema entry not valid — checking magnet mode.")
@@ -926,17 +1110,37 @@ async def run_volume_profile_strategy(client: CTraderMCPClient, config: dict, ca
                                 "targets": magnet_result.targets,
                             }, indent=2))
                         else:
+                            volume = calculate_position_size(
+                            sl_pips=magnet_result.risk_pips,
+                            risk_pct=vp_config["base_risk_pct"],
+                            balance=vp_config["balance"],
+                            pip_value_per_unit=vp_config["pip_value_per_unit"],
+                            max_volume_lots=vp_config["max_volume_lots"],
+                            min_trade_volume=vp_config["min_trade_volume"],
+                            volume_step=vp_config["volume_step"],
+                            volume_min_units=vp_config["volume_min_units"],
+                            volume_max_units=vp_config["volume_max_units"],
+                            )
+                            log.warning("Placing LIVE magnet order: %s %s @ %.2f, SL=%.2f, TP=%.2f, Volume=%.2f",
+                            magnet_result.direction, config["symbol"], ctx.price, magnet_result.sl, magnet_result.targets[0], volume)
                             order_args = {
-                                "symbolName": config["symbol"],
-                                "side": "buy" if magnet_result.direction == "BUY" else "sell",
-                                "volume": config["trade_volume"],
-                                "volumeType": "lots",
-                                "stopLossPips": round(magnet_result.risk_pips, 2),
-                                "takeProfitPips": round(magnet_result.tp1_pips, 2),
+                            "symbolName": config["symbol"],
+                            "side": "buy" if magnet_result.direction == "BUY" else "sell",
+                            "volume": volume,
+                            "volumeType": "lots",
+                            "stopLossPips": round(magnet_result.risk_pips, 2),
+                            "takeProfitPips": round(magnet_result.tp1_pips, 2),
                             }
                             trade_result = await client.call(TOOL_NAMES["place_order"], order_args)
                             log.info("Magnet order result: %s", trade_result)
                             active_position_id = str(trade_result.get("id", "unknown"))
+                            if active_position_id != "unknown":
+                                    _trade_volumes[active_position_id] = volume
+                            intraday_candles_mag = await fetch_intraday_candles(client, config)
+                            await _apply_ollama_sl_tp_once(
+                            client, config, active_position_id, ctx.price,
+                            {}, intraday_candles_mag, ollama_sl_tp_processed,
+                            )
 
         iterations += 1
         log.debug("Iteration %d of max_loop_iterations=%d complete.", iterations, config["max_loop_iterations"])
@@ -1025,6 +1229,7 @@ async def main():
 
         # --- Step 2: watch live price and act on the strategy ---
         iterations = 0
+        ollama_sl_tp_processed = set()
         while True:
             log.debug("--- Polling iteration %d ---", iterations + 1)
             positions = await client.call(TOOL_NAMES["list_positions"], {})
@@ -1063,7 +1268,7 @@ async def main():
                 intraday_candles = await fetch_intraday_candles(client, config)
 
                 log.debug("Calling Ollama for position management (model=%s)", config["ollama_model"])
-                mgmt_signal = ask_ollama_for_position_management(
+                mgmt_signal = await ask_ollama_for_position_management(
                     config["ollama_model"], strategy, config["symbol"], price,
                     positions, pending_orders, intraday_candles,
                 )
@@ -1078,7 +1283,7 @@ async def main():
                             new_sl = price - config["stop_loss_points"] if pos.get("type", pos.get("side", "Buy")) == "Buy" else price + config["stop_loss_points"]
                             if new_sl > current_sl if pos.get("type", pos.get("side", "Buy")) == "Buy" else new_sl < current_sl:
                                 log.info("Updating SL for position %s from %.2f to %.2f", pos_id, current_sl, new_sl)
-                                await client.call(TOOL_NAMES["close_position"], {
+                                await client.call(TOOL_NAMES["amend_position"], {
                                     "Id": pos_id,
                                     "stopLoss": round(new_sl, 2),
                                 })
@@ -1112,7 +1317,13 @@ async def main():
 
                 if signal in ("BUY", "SELL"):
                     log.info("Signal is %s — attempting to place trade.", signal)
-                    await place_trade(client, signal, config)
+                    trade_result = await place_trade(client, signal, config)
+                    position_id = trade_result.get("id") if isinstance(trade_result, dict) else None
+                    if position_id:
+                        await _apply_ollama_sl_tp_once(
+                            client, config, str(position_id), price,
+                            strategy, intraday_candles, ollama_sl_tp_processed,
+                        )
                 else:
                     log.debug("Signal is HOLD — no trade action taken.")
 

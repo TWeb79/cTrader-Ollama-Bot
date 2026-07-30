@@ -1,32 +1,44 @@
-# Introduction
-To replace Ollama with a local AI model trained on historical data, we will follow these steps:
+# Implementation Plan: Ollama SL/TP Recommendation + Trailing SL Fix
 
-1. **Data Preparation**: Load the historical data as training data for the local AI model.
-2. **Model Training**: Train the local AI model using the historical data.
-3. **Integration with Trading System**: Integrate the trained model with the trading system to make decisions based on live data.
-4. **Feedback Loop Implementation**: Implement a feedback loop from the trade to the model to continuously learn and improve, especially if a trade fails.
+## Objective
+Implement one-time Ollama-based stop-loss and take-profit recommendation immediately after a position is opened, then use only trailing stop-loss for position management.
 
-## Step 1: Data Preparation
+## Changes Required
 
-* Load historical trade data into a suitable format for training the AI model.
-* Ensure data is clean, complete, and properly formatted.
+### 1. Fix Trailing SL Bug
+- In `run_volume_profile_strategy` (line ~824): change `close_position` to `amend_position`
+- In `main()` ollama loop (line ~1081): change `close_position` to `amend_position`
 
-## Step 2: Model Training
+### 2. Add `ask_ollama_for_sl_tp_recommendation` Function
+- Create a new Ollama prompt function that returns JSON: `{"stop_loss": float, "take_profit": float, "reasoning": str}`
+- Inputs: model, symbol, current_price, position details, strategy, intraday candles
+- Outputs: recommended absolute SL/TP price levels
 
-* Select or develop a suitable AI model architecture that can learn from the historical data.
-* Train the model using the prepared historical data.
-* Evaluate the model's performance on a test set to ensure it generalizes well.
+### 3. Integrate in Volume Profile Strategy Path
+- After placing a volume profile trade (line ~914) and magnet trade (line ~939):
+  - Fetch updated positions to get new position details
+  - If position not yet processed for Ollama SL/TP:
+    - Call `ask_ollama_for_sl_tp_recommendation`
+    - Amend position with recommended SL and TP
+    - Mark position as processed
+- Track processed positions with a set (`ollama_sl_tp_processed`)
 
-## Step 3: Integration with Trading System
+### 4. Integrate in Main Ollama Strategy Path
+- After `place_trade` in main loop (line ~1115):
+  - Capture trade result and extract position ID
+  - Fetch updated positions
+  - If position not yet processed for Ollama SL/TP:
+    - Call `ask_ollama_for_sl_tp_recommendation`
+    - Amend position with recommended SL and TP
+    - Mark position as processed
+- Track processed positions with a set (`ollama_sl_tp_processed`)
 
-* Modify the trading system to use predictions from the trained AI model for decision-making.
-* Ensure the model can receive live data and output decisions in a format compatible with the trading system.
+### 5. Position Management Behavior
+- After initial Ollama SL/TP is applied, position management only trails SL
+- No further TP adjustments after initial recommendation
+- Existing `ask_ollama_for_position_management` already returns TRAIL_SL/CLOSE/HOLD — no changes needed there
 
-## Step 4: Feedback Loop Implementation
-
-* Design a feedback mechanism that updates the AI model based on the outcome of trades (especially failed trades).
-* Implement this feedback loop to continuously improve the model's performance.
-
-## Conclusion
-
-By following these steps, we can replace Ollama with a local AI model trained on historical data and integrate it with the trading system for improved decision-making.
+## Verification
+- Run lint/typecheck if available
+- Review logic for both strategy paths
+- Confirm dry_run logging is correct

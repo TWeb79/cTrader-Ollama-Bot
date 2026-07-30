@@ -14,6 +14,16 @@ trader.log
 trades_log.json
 events.json
 
+# ML Model artifacts
+trading_model.joblib
+trading_scaler.joblib
+trade_history.json
+
+# Environment and ports
+ports.env
+.env
+.env.local
+
 # IDE
 .vscode/
 .idea/
@@ -24,10 +34,6 @@ events.json
 # OS
 .DS_Store
 Thumbs.db
-
-# Environment
-.env
-.env.local
 
 # Test artifacts
 .pytest_cache/
