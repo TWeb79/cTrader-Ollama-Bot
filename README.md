@@ -1,7 +1,8 @@
 # US500 AI Trading Assistant
 
+------- REPLACE
 ## Overview
-This project implements an AI-powered trading assistant that connects to a cTrader MCP server and uses a local ML model (GradientBoostingClassifier) to make trading decisions on the US500 instrument (S&P 500 index). It replaces the previous Ollama LLM approach with a model trained on historical trade outcomes.
+This project implements an AI-powered trading assistant that connects to a cTrader MCP server. There are two versions of the trader: Trader.py, which works with a local Ollama, and TraderAI.py, which builds its own model using machine learning. TraderAI.py uses a local ML model (GradientBoostingClassifier) to make trading decisions on the US500 instrument (S&P 500 index), replacing the previous Ollama LLM approach with a model trained on historical trade outcomes.
 
 ## Features
 - Connects to cTrader MCP server via HTTP transport
